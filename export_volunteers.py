@@ -15,6 +15,12 @@ def main():
     output_directory = os.path.join(base_dir, 'sensitive_volunteer_data', datetime.now().strftime('%Y-%m-%d %H.%M'))
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+    else:
+        for filename in os.listdir(output_directory):
+            file_path = os.path.join(output_directory, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                print(filename, "is removed")
 
     # Create csv file headers
     connection = create_connection()
@@ -29,7 +35,7 @@ def main():
 
         # Sometimes the file name contains question marks or other weird characters and will error out
         # Errors will be lumped into the "No County" file
-        with open(os.path.join(output_directory, county + '.csv'), 'w', encoding="utf-8") as f:
+        with open(os.path.join(output_directory, county + '.csv'), 'w', encoding="utf-8", newline='') as f:
 
             # Prepare data
             results = execute_read_query(f"SELECT * FROM volunteers WHERE county = '{county}';")
